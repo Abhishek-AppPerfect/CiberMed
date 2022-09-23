@@ -1,6 +1,8 @@
 import boto3
 import maskpass
-import passVerification 
+from .passwordAuthenticate import *
+from .authorize import auth
+from .updatedata import addNewUser
 from botocore.exceptions import NoCredentialsError
 
 def create_user_in_aws(username):
@@ -15,18 +17,18 @@ def create_user_in_aws(username):
     response=iam.create_access_key(UserName=username)
     return  response.get('AccessKey').get('AccessKeyId'),response.get('AccessKey').get('SecretAccessKey')
  
-def auth(username):
-    print(username)
-    password=base64.b64encode(maskpass.advpass(prompt="Password : ").encode("utf-8"))
-    f=open("username.txt",'r')
-    Users=f.read().split('\n')
-    for user in Users:
-        print(user.split(" "))
-        fname,fpass,access_key,secret_access_key=user.split(" ")
-        print(fname+username)
-        if(fname==username and fpass==password):
-            return user
-    return False
+# def auth(username):
+#     print(username)
+#     password=base64.b64encode(maskpass.advpass(prompt="Password : ").encode("utf-8"))
+#     f=open("username.txt",'r')
+#     Users=f.read().split('\n')
+#     for user in Users:
+#         print(user.split(" "))
+#         fname,fpass,access_key,secret_access_key=user.split(" ")
+#         print(fname+username)
+#         if(fname==username and fpass==password):
+#             return user
+#     return False
 
 def upload_file_to_bucket(f,user,filename):
     values=user.split(" ")
@@ -37,11 +39,11 @@ def upload_file_to_bucket(f,user,filename):
 
 def adduser(username):
     # password=base64.b64encode(maskpass.advpass(prompt="Password : ").encode("utf-8"))
-    password=passVerification.passEntry()
+    
     if(auth(username)==False):
-        f=open("username.txt",'a+')
-        users=f.read()
-        accees_key,secret_access_key=create_user_in_aws(username)
-        users+=username+" "+password+" "+accees_key+" "+secret_access_key+"\n"
-        f.write(users)
+        password=passEntry()
+        accessKey,secretAccessKey=create_user_in_aws(username)
+        addNewUser(username,password,accessKey,secretAccessKey)
+    else :
+        print("User Already Exist")
 

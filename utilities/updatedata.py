@@ -39,6 +39,10 @@ def updateUserName(old_userName,new_userName):
     usersData[new_userName]=usersData[old_userName]
     del usersData[old_userName]
     updateUserCredentialsFile(".usercredentials.json", usersData)
-
+    iam = boto3.client('iam')
+    iam.update_user(
+        UserName=old_userName,
+        NewUserName=new_userName
+    )
 
 # updateUserName("Abhishek1","Abhishek")

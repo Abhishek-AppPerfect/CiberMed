@@ -1,17 +1,18 @@
 import json
-from updatedata import openUserCredentialsFile,updateUserCredentialsFile
-from passwordAuthenticate import passVerify
+from .updatedata import openUserCredentialsFile,updateUserCredentialsFile
+from .passwordAuthenticate import passVerify
 
 def auth(username):
     usersData=openUserCredentialsFile(".usercredentials.json")
 
     if username in usersData.keys():
         result=passVerify(usersData[username])
-        if result is True:
+        if result == True:
             return usersData[username]
         else:
-            return result
+            return False
     else:
-        print("User Doesn't exist")
+        # print("User Doesn't exist")
+        return False
 
-print(auth("Abhishek"))
+# print(auth("Abhishek"))
